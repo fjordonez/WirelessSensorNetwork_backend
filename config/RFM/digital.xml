@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FieldNode>
+  <IOConfiguration>
+    <CONTINUOUS_LED/>
+    <DIGITAL_INPUT/>
+  </IOConfiguration>
+  <DynamicPowerManagement>
+    <PowerManagement AwakeCount="2" SleepCount="120">
+      <ENABLE_POWER_MANAGEMENT/>
+      <ENABLE_LISTEN_BEFORE_SLEEP/>
+      <REPORT_ON_WAKE_UP/>
+      <CHECKING_DURING_SLEEP/>
+    </PowerManagement>
+  </DynamicPowerManagement>
+  <StaticPowerManagement>
+    <PowerManagement AwakeCount="2" SleepCount="120">
+      <ENABLE_POWER_MANAGEMENT/>
+      <ENABLE_LISTEN_BEFORE_SLEEP/>
+      <REPORT_ON_WAKE_UP/>
+      <CHECKING_DURING_SLEEP/>
+    </PowerManagement>
+  </StaticPowerManagement>
+  <DigitalInput CountThreshold="0" Debounce="8">
+    <INPUT_EVENT_MESSAGING/>
+  </DigitalInput>
+  <DigitalOutput TimeMultiplier="0"/>
+  <ADCInput HighThreshold="255" LowThreshold="0"/>
+  <UART/>
+  <ADC_TIMER timer="0"/>
+  <EVENT_ROUTING routers="15"/>
+  <POWER_ON_NOTIFICATION powerOn="1"/>
+</FieldNode>

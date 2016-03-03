@@ -1,0 +1,38 @@
+
+INSTRUCTIONS
+
+1. MQTT
+   The 'broker' process must be up and working.
+   In case it is not running, it can be launched using the scripts at the paths:
+	./lib/rsmb_1.2.0/linux_ia64
+	./lib/rsmb_1.2.0/linux_ia32
+   depending on the system architecture.
+
+2. MYSQL
+   MySql must be installed. For now, the processes will work with the root user (todo list).
+   With credentials:
+	User: root
+	Pass: 1234
+   Before executing, the database model must be instantiated:
+	mysql -u root -p < ./db/createDatabase.sql
+   In case the database should be cleaned:
+	mysql -u root -p < ./db/truncateDatabase.sql
+
+3. JAVA
+   First check a Java SDK is installed on the system. The system has been tested the version:
+	java version "1.6.0_20"
+	OpenJDK Runtime Environment (IcedTea6 1.9.9) (6b20-1.9.9-0ubuntu1~10.04.2)
+	OpenJDK Server VM (build 19.0-b09, mixed mode)
+
+4. EXECUTION
+   To execute the system there is the script 'start.sh' to launch every module.
+   It must be checked that the serial port employed by the base node is ready:
+	Example: To free the default serial port '/dev/ttyUSB0' run 'sudo rm /var/lock/LCK..ttyUSB0'
+   The MQTT port (default 1883) must be open to connect with the mobile devices
+   
+
+SIMULATOR
+  To launch the sensor network simulator, we can run the script 'simulatedNetwork.sh'
+  which can be executed with the command 'nohup ./simulatedNetwork.sh >> /dev/null &'
+  It will start the java module which reads from the SensorNetwork database (table DIGITAL-Event) and publish the sensor events on the MQTT topic '/sensor' 
+    Message example: 'PG_3d2_DIGITAL 0 Mon Jun 27 17:22:53 CEST 2011' on the topic 'sensor/PG_3d2_DIGITAL'

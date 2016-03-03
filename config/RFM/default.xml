@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FieldNode>
+  <IOConfiguration>
+    <UART/>
+    <DIGITAL_OUTPUT/>
+    <ANALOG_INPUT/>
+    <DIGITAL_INPUT/>
+  </IOConfiguration>
+  <DynamicPowerManagement>
+    <PowerManagement AwakeCount="0" SleepCount="0"/>
+  </DynamicPowerManagement>
+  <StaticPowerManagement>
+    <PowerManagement AwakeCount="0" SleepCount="0"/>
+  </StaticPowerManagement>
+  <DigitalInput CountThreshold="0" Debounce="0">
+    <ENABLE_COUNT/>
+    <HIGH_TO_LOW_ONLY/>
+    <LOW_TO_HIGH_ONLY/>
+  </DigitalInput>
+  <DigitalOutput TimeMultiplier="0"/>
+  <ADCInput HighThreshold="255" LowThreshold="0"/>
+  <UART/>
+  <ADC_TIMER timer="0"/>
+  <EVENT_ROUTING routers="15"/>
+  <POWER_ON_NOTIFICATION powerOn="1"/>
+</FieldNode>

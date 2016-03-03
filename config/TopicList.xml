@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TopicsList>
+    <!-- Eventos generados por lo sensores de la red -->
+  <Topic name="wfsnrnet/sensor/event" alias="sensorEvents"/>
+    <!-- Informacion de activacion de los sensores -->
+  <Topic name="wfsnrnet/sensor/data" alias="sensorNotifications"/>
+	<!-- Ultimos valores de los sensores -->
+  <Topic name="wfsnrnet/sensor/lastvalues" alias="sensorLastValues"/>
+  	<!-- Solicitud de informacion sobre sensores -->
+	<!-- sensor:all -->	
+	<!-- sensor:alias: -->
+  <Topic name="wfsnrnet/network/info/request" alias="infoRequest"/>
+  <Topic name="wfsnrnet/network/info/response" alias="infoResponse"/>
+  <Topic name="wfsnrnet/network/command/request" alias="commandRequest"/>
+  <Topic name="wfsnrnet/network/command/response" alias="commandResponse"/>
+</TopicsList>

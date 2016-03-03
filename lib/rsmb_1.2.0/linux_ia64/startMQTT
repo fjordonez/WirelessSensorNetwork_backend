@@ -1,0 +1,5 @@
+#!/bin/bash
+
+echo "Starting MQTT Broker..."
+nohup ./broker >> /dev/null & 
+

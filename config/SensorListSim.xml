@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SensorList placeID="HouseAmelia">
+  <Sensor sensorAlias="1" hardwareID="3d2" sensorPlace="Place1" sensorType="KitchenHeat" debounceTime="30000"/>
+  <Sensor sensorAlias="2" hardwareID="3b5" sensorPlace="Place2" sensorType="Toilet" debounceTime="1000"/>
+  <Sensor sensorAlias="3" hardwareID="3ac" sensorPlace="Place3" sensorType="BathroomDoor" debounceTime="1000"/>
+  <Sensor sensorAlias="4" hardwareID="726" sensorPlace="Place4" sensorType="Kitchen" debounceTime="1000"/>
+  <Sensor sensorAlias="5" hardwareID="460" sensorPlace="Place5" sensorType="KitchenStorage" debounceTime="1000"/>
+  <Sensor sensorAlias="6" hardwareID="4dd" sensorPlace="Place6" sensorType="Outside" debounceTime="1000"/>
+  <Sensor sensorAlias="7" hardwareID="73e" sensorPlace="Place7" sensorType="SleepDoor" debounceTime="1000"/>
+  <Sensor sensorAlias="8" hardwareID="3a6" sensorPlace="Place8" sensorType="Sleep" debounceTime="1000"/>
+  <Sensor sensorAlias="9" hardwareID="3d7" sensorPlace="Place9" sensorType="Bathroom" debounceTime="1000"/>
+  <Sensor sensorAlias="10" hardwareID="717" sensorPlace="Place10" sensorType="KitchenHeat" debounceTime="1000"/>
+  <Sensor sensorAlias="11" hardwareID="6f4" sensorPlace="Place11" sensorType="Toilet" debounceTime="1000"/>
+</SensorList>

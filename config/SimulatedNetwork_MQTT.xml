@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MQTTConfiguration brokerHostName="127.0.0.1" brokerPortNumber="1883" clientId="simNet">
+  <ENABLE_CLEAN_START/>
+  <KeepAlive seconds="900"/>
+  <QualityOfService value="0"/>
+</MQTTConfiguration>
+

@@ -1,0 +1,240 @@
+package wfsnrnet;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import wfsnrnet.comm.mqtt.MQTTConfiguration;
+import wfsnrnet.comm.mqtt.MQTTModule;
+import wfsnrnet.data.SensorList;
+import wfsnrnet.data.TopicList;
+import wfsnrnet.io.LogFile;
+import wfsnrnet.io.db.SensorsTableHandler;
+import wfsnrnet.io.db.sql.DBConnection;
+import wfsnrnet.io.db.sql.ParamsDB;
+import wfsnrnet.util.ArrayUtils;
+import wfsnrnet.util.ListUtils;
+import wfsnrnet.xml.XMLSerial;
+import wfsnrnet.xml.parser.MQTTConfigurationParser;
+import wfsnrnet.xml.parser.SensorListParser;
+import wfsnrnet.xml.parser.TopicListParser;
+
+public class LastValuesPublisher extends MQTTModule{
+
+	private static SimpleDateFormat sdf = new SimpleDateFormat();
+	static final SimpleDateFormat sdfMessage = new SimpleDateFormat("HH:mm:ss");
+	private static String LOG_PATH = "./log/LastValuesPublisher.log";
+	private MQTTConfiguration MQTTConfig;
+	private SensorList sensorList;
+	private TopicList topicList;
+	private String sensorLastValuesTopic;
+	private LastValuesConfig lastValuesConfig;
+	//private static String LASTVALUES_MQTT_PATH = "./config/LastValuesPublisher_MQTT.xml";
+	
+	public LastValuesPublisher(String sensorListFile, String MQTTConfigFile, String configFile, String  topicListFile){
+		System.out.println("LastValuesPublisher::LastValuesPublisher Starting last values publisher: "+sdf.format((Calendar.getInstance()).getTime())+"\n");
+		
+		System.out.println("LastValuesPublisher::LastValuesPublisher Parsing MQTT config file "+MQTTConfigFile);
+		MQTTConfig = MQTTConfigurationParser.parse(MQTTConfigFile,topicList);
+		       
+		System.out.println("LastValuesPublisher::LastValuesPublisher Parsing sensors list file "+sensorListFile);
+		sensorList = SensorListParser.parse(sensorListFile);
+		System.out.println("LastValuesPublisher::main Sensors list ->");
+		System.out.println(sensorList.toString());
+		
+		System.out.println("LastValuesPublisher::LastValuesPublisher Parsing topics list file "+topicListFile);
+		topicList = TopicListParser.parse(topicListFile);
+		sensorLastValuesTopic = topicList.findName("sensorLastValues");
+		
+		System.out.println("LastValuesPublisher::LastValuesPublisher Parsing config file "+configFile);
+		lastValuesConfig = new LastValuesConfig();
+		lastValuesConfig.parse(configFile);
+		System.out.println("LastValuesPublisher::LastValuesPublisher Configuration ->");
+		System.out.println(lastValuesConfig.toString());
+		
+	}
+	
+    public void start() throws Exception  
+    {
+		System.out.println("LastValuesPublisher::start Connection parameters ->");
+		System.out.println(MQTTConfig.toString());  	
+    	System.out.println("LastValuesPublisher::start Connecting to MQTT broker...");
+    	super.startMQTT(MQTTConfig);
+    	
+		DBConnection connection = null;
+		try {
+			System.out.println("LastValuesPublisher::start Connecting to database WifiSensorNetwork...");
+			connection = new DBConnection(new ParamsDB("root","1234","WifiSensorNetwork"));
+
+			while(true){
+				Calendar currentCal = Calendar.getInstance();
+				currentCal.set(Calendar.SECOND, 00);
+		       	for (int i=0;i<sensorList.size();i++){
+		       		for (int j=0;j<lastValuesConfig.intervalTimes().length;j++){
+		       			int mins = lastValuesConfig.intervalTimeAt(j);
+			    		String message = "T"+mins+";S"+sensorList.get(i).hardwareID()+";"/*+sdfMessage.format((Calendar.getInstance()).getTime())+";"*/;
+			    		Calendar calA =  (Calendar) currentCal.clone();
+			    		Calendar calB = null;
+			    		String values = "";
+			    		for (int z=0;z<lastValuesConfig.nbIntervalPublish();z++){
+			    			calB =  (Calendar) calA.clone();
+			    			calA.add(Calendar.SECOND, -(mins*60));	    
+			    		   	Statement stmt = connection.getStatement();
+			    		   	
+			    		   	//****POSIBLEMENTE AQUI HAYA UN ERROR DE MEMORIA CUANDO YHAY MUCHAS INSTANCIAS EN LA TABLA ****//
+			    		   	
+			    		   	String query = "SELECT * FROM `SensorData` WHERE timestamp BETWEEN "+calA.getTimeInMillis()+" AND "+calB.getTimeInMillis()+" AND sensorID = '"+sensorList.get(i).hardwareID()+"' AND value = 1;";
+			    		   	ResultSet rsQuery = stmt.executeQuery(query);
+			    		  	int value = 0;
+			    		   	if (rsQuery.first())
+			    		   		value = 1;
+			    		   	//System.out.println("      "+calA.getTime().toString()+" "+calB.getTime().toString()+"--->"+value);
+			    		   	if (values.isEmpty())
+			    		   		values += value;
+			    		   	else
+			    		   		values = value + "," + values;
+			    		}
+			    		message += sdfMessage.format(calA.getTime()) + ";" + values + ";";
+			    		this.publishMessage(sensorLastValuesTopic, message);
+		    		}
+		    	}
+		    	Thread.currentThread().sleep(lastValuesConfig.publishInterval()*1000);
+			}
+
+		}catch(Exception e) {
+            throw(e);
+        }finally {
+			connection.closeConnection();
+			super.endMQTT();
+		}
+
+    }
+	
+	public static void main(String[] args)  throws Exception {
+
+		
+		if (args.length < 4){
+			System.err.println("Use: java LastValuesPublisher Sensor_List_File MQTT_Config_File Std_Config_file MQTT_Topic_List &");
+			throw new Exception();	
+		}
+		
+		LogFile.setLogFile(LOG_PATH);
+		
+		LastValuesPublisher lastValuesPublisher = new LastValuesPublisher(args[0],args[1],args[2],args[3]);
+		lastValuesPublisher.start();
+	}
+	
+	/***
+	 * 
+	 * Class to parse and store the configuration data of the module
+	 * 
+	 * @author fjordonez
+	 *
+	 */
+	class LastValuesConfig {
+
+		private int publishInterval;
+		private int[] intervalTimes;
+		private int nbIntervalPublish;
+		
+		public LastValuesConfig(){
+			publishInterval = 60 * 5;
+			intervalTimes = new int[] {1*60,5*60,15*60};
+			nbIntervalPublish = 25;
+		}
+		
+		public int publishInterval(){
+			return publishInterval;
+		}
+		
+		public int[] intervalTimes(){
+			return intervalTimes;
+		}
+		
+		public int intervalTimeAt(int i){
+			return intervalTimes[i];
+		}
+		
+		public int nbIntervalPublish(){
+			return nbIntervalPublish;
+		}
+		
+		public String toString(){
+			String ret="Publishing Interval(seconds) = "+publishInterval+"\n";
+			ret += "Number of intervals = "+nbIntervalPublish+"\n";
+			ret += "Length of intervals (minutes) = "+ArrayUtils.toString(intervalTimes)+"\n";
+			return ret;
+		}
+		
+		public void parse(String fileName){
+			XMLSerial xmlSerial=new XMLSerial();
+			try{
+			    Node mainNode = xmlSerial.load(fileName);
+			    if (mainNode==null)
+			    	System.out.println("LastValuesConfigParser::parse Unable to parse file "+fileName);
+			    else{
+			    	Node configNode = xmlSerial.getChild(mainNode,"LastValuesConfiguration");
+			    	if (configNode!=null){
+			    		
+				    	Node pubIntNode = xmlSerial.getChild(configNode,"PublishInterval");
+					    if (pubIntNode!=null)
+					    {
+					    	String seconds=xmlSerial.getAttribute(pubIntNode,"seconds");
+							try{
+								publishInterval = Integer.parseInt(seconds);
+							}catch (NumberFormatException e){
+								System.out.println("LastValuesConfigParser::parse -seconds- Cant parse '"+seconds+"'");
+							}
+					    }
+					    
+				    	Node nbIntNode = xmlSerial.getChild(configNode,"NbIntervalPublish");
+					    if (nbIntNode!=null)
+					    {
+					    	String value=xmlSerial.getAttribute(nbIntNode,"value");
+							try{
+								nbIntervalPublish = Integer.parseInt(value);
+							}catch (NumberFormatException e){
+								System.out.println("LastValuesConfigParser::parse -value- Cant parse '"+value+"'");
+							}
+					    }
+					    
+				    	Node timeIntervalsNode = xmlSerial.getChild(configNode,"TimeIntervals");
+					    if (timeIntervalsNode!=null)
+					    {
+					    	NodeList intervalsNode = timeIntervalsNode.getChildNodes();
+					    	List<Integer> intervalValues = new ArrayList<Integer>();
+					    	for (int i = 0; i < intervalsNode.getLength(); i++)
+					    	{
+					    		Node intervalNode = intervalsNode.item(i);
+					    	    if (intervalNode.getNodeName().equals("Interval"))
+					    	    {
+					    	    	
+						    		String value = xmlSerial.getAttribute(intervalNode,"minutes");
+									try{
+								    	if (value!=null)
+								    		intervalValues.add(new Integer(Integer.parseInt(value)));
+									}catch (NumberFormatException e){
+										System.out.println("LastValuesConfigParser::parse -Interval value- Cant parse '"+value+"'");
+									}
+
+					    	    }
+					    	}
+					    	intervalTimes = ListUtils.toArray_Integer(intervalValues);
+					    }
+			    	}
+			    }
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+		}
+	}
+
+}

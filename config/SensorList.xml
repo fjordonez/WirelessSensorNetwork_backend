@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SensorList placeID="HouseAmelia">
+  <Sensor sensorAlias="1" hardwareID="301" sensorPlace="Shower" sensorType="Bathroom" debounceTime="30000"/>
+  <Sensor sensorAlias="2" hardwareID="3d2" sensorPlace="Basin" sensorType="Bathroom" debounceTime="2000"/>
+  <Sensor sensorAlias="3" hardwareID="3e2" sensorPlace="Toilet" sensorType="Toilet">
+     <ENABLE_INTERVALSENSOR/>
+  </Sensor>   
+  <Sensor sensorAlias="4" hardwareID="304" sensorPlace="MedicalCloset" sensorType="">
+     <ENABLE_INTERVALSENSOR/>
+  </Sensor>
+  <Sensor sensorAlias="5" hardwareID="305" sensorPlace="Bed" sensorType="Sleep" debounceTime="240000">
+     <ENABLE_INVERTED/>
+     <ENABLE_INTERVALSENSOR/>
+  </Sensor>  
+  <Sensor sensorAlias="6" hardwareID="306" sensorPlace="Seat" sensorType="" debounceTime="5000">
+     <ENABLE_INVERTED/>
+     <ENABLE_INTERVALSENSOR/>
+  </Sensor>  
+  <Sensor sensorAlias="7" hardwareID="5c8" sensorPlace="KitchenDoor" sensorType="" debounceTime="2000"/>  
+  <Sensor sensorAlias="8" hardwareID="308" sensorPlace="MainDoor" sensorType="Outside">
+     <ENABLE_INTERVALSENSOR/>
+  </Sensor>
+  <Sensor sensorAlias="9" hardwareID="309" sensorPlace="BedroomDoor" sensorType="SleepDoor" debounceTime="2000"/>
+  <!-- <Sensor sensorAlias="10" hardwareID="000" sensorPlace="BreakFastCabinet" sensorType="KitchenStorage">
+     <ENABLE_INTERVALSENSOR/>
+  </Sensor>  -->
+  <Sensor sensorAlias="11" hardwareID="203" sensorPlace="LivingDoor" sensorType="" debounceTime="2000"/>
+  <Sensor sensorAlias="12" hardwareID="204" sensorPlace="Cupboard" sensorType="KitchenStorage">
+     <ENABLE_INTERVALSENSOR/>
+  </Sensor>
+  <Sensor sensorAlias="13" hardwareID="201" sensorPlace="Fridge" sensorType="KitchenStorage">
+     <ENABLE_INTERVALSENSOR/>
+  </Sensor>
+  <Sensor sensorAlias="16" hardwareID="101" sensorPlace="Microwave" sensorType="KitchenHeat">
+     <ENABLE_INVERTED/>
+     <ENABLE_INTERVALSENSOR/>
+  </Sensor>
+</SensorList>
+<!-- Sensor types: Bathroom, Toilet, BathroomDoor, Kitchen, KitchenStorage, KitchenHeat, Outside, SleepDoor, Sleep, Novalue -->
+<!-- ENABLE_INTERVALSENSOR enables a sensor to have 0's and 1's events, otherwise only 1's events are recibed -->
